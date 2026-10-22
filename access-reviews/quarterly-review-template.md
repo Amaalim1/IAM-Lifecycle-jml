@@ -1,6 +1,6 @@
 # Quarterly Access Review
 
-**Quarter:** ____ **Reviewer:** ____ **Scope:** (department / application / privileged roles)
+**Quarter:** _ **Reviewer:** _ **Scope:** (department / application / privileged roles)
 
 ## Process
 
@@ -30,4 +30,4 @@ flowchart LR
 
 ## Sign-off
 
-Reviewer: ____ Date: ____ IAM verification: ____ Date: ____
+Reviewer: _ Date: _ IAM verification: _ Date: _
