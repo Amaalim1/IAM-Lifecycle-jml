@@ -1,0 +1,12 @@
+// Enabled accounts with no sign-in for 90 days (possible missed leavers or dormant accounts)
+// Tables: IdentityInfo, SigninLogs | MITRE: T1078
+let Lookback = 90d;
+let Active = SigninLogs
+    | where TimeGenerated > ago(Lookback)
+    | distinct UserPrincipalName;
+IdentityInfo
+| where TimeGenerated > ago(14d)
+| summarize arg_max(TimeGenerated, *) by AccountUPN
+| where IsAccountEnabled == true
+| join kind=leftanti Active on $left.AccountUPN == $right.UserPrincipalName
+| project AccountUPN, Department, JobTitle, Manager, IsAccountEnabled

@@ -1,0 +1,10 @@
+// Privileged role assignments or group changes outside business hours (UTC-adjusted; edit hours)
+// Tables: AuditLogs | MITRE: T1098 Account Manipulation
+AuditLogs
+| where OperationName in ("Add member to role", "Add eligible member to role", "Add member to group")
+| extend Hour = datetime_part("hour", TimeGenerated), Day = dayofweek(TimeGenerated)
+| where Hour !between (13 .. 22) or Day in (0d, 6d)    // approx. 08:00-17:00 Eastern
+| extend Actor = tostring(InitiatedBy.user.userPrincipalName),
+         Target = tostring(TargetResources[0].userPrincipalName),
+         Role = tostring(TargetResources[0].displayName)
+| project TimeGenerated, OperationName, Actor, Target, Role, Result

@@ -1,0 +1,5 @@
+EmployeeId,GivenName,Surname,Department,JobTitle,ManagerUpn,EventType,EffectiveDate,OldDepartment
+E1001,Amira,Hassan,Finance,Financial Analyst,m.lee@contoso.example,Joiner,2026-11-02,
+E1002,Daniel,Okafor,Engineering,Software Developer,s.patel@contoso.example,Joiner,2026-11-02,
+E1003,Priya,Nair,Engineering,Senior Developer,s.patel@contoso.example,Mover,2026-11-09,Finance
+E1004,Tom,Walker,IT,Service Desk Analyst,j.chen@contoso.example,Leaver,2026-11-13,

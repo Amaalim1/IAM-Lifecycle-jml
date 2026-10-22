@@ -1,0 +1,19 @@
+// Users added to a new ROLE- group within 30 days who were never removed from another ROLE- group
+// Tables: AuditLogs | Approximation: tune to your group naming standard
+let Adds = AuditLogs
+    | where TimeGenerated > ago(30d) and OperationName == "Add member to group"
+    | extend UPN = tolower(tostring(TargetResources[0].userPrincipalName)),
+             Group = tostring(TargetResources[0].modifiedProperties[1].newValue)
+    | where Group has "ROLE-"
+    | summarize Added = make_set(Group) by UPN;
+let Removes = AuditLogs
+    | where TimeGenerated > ago(30d) and OperationName == "Remove member from group"
+    | extend UPN = tolower(tostring(TargetResources[0].userPrincipalName)),
+             Group = tostring(TargetResources[0].modifiedProperties[1].oldValue)
+    | where Group has "ROLE-"
+    | summarize Removed = make_set(Group) by UPN;
+Adds
+| join kind=leftouter Removes on UPN
+| where isempty(Removed)
+| project UPN, RoleGroupsAdded = Added, RoleGroupsRemoved = Removed
+// Pair with a current-membership export (Graph) for a definitive check

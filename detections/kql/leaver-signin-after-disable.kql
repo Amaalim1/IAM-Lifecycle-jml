@@ -1,0 +1,14 @@
+// Sign-in activity after an account was disabled (leaver abuse or incomplete revocation)
+// Tables: AuditLogs, SigninLogs | MITRE: T1078 Valid Accounts
+let Disabled = AuditLogs
+    | where OperationName =~ "Disable account"
+    | extend UPN = tolower(tostring(TargetResources[0].userPrincipalName))
+    | summarize DisableTime = max(TimeGenerated) by UPN;
+SigninLogs
+| extend UPN = tolower(UserPrincipalName)
+| join kind=inner Disabled on UPN
+| where TimeGenerated > DisableTime
+| project TimeGenerated, UPN, DisableTime, ResultType, ResultDescription, IPAddress, AppDisplayName, Location
+| order by TimeGenerated desc
+// ResultType 0 = successful sign-in after disable (critical: token still valid)
+// ResultType 50057 = blocked, disabled account (attempted use, still worth triage)
